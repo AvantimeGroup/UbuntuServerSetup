@@ -1,6 +1,6 @@
 #!/bin/bash
   
-EXPECTED_ARGS=3
+EXPECTED_ARGS=4
 E_BADARGS=65
 MYSQL=`which mysql`
   
@@ -18,4 +18,4 @@ then
   exit $E_BADARGS
 fi
   
-$MYSQL -uroot -p -e "$SQL"
+$MYSQL -u root -p -e "$SQL"
