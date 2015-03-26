@@ -1,4 +1,5 @@
 #!/bin/bash
+#Modified script based on http://www.bluepiccadilly.com/2011/12/creating-mysql-database-and-user-command-line-and-bash-script-automate-process
   
 EXPECTED_ARGS=4
 E_BADARGS=65
