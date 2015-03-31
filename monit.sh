@@ -38,12 +38,6 @@ echo "<Location /server-status>
 
 /etc/init.d/apache2 restart
  
-awk '$1~/^DocumentRoot/{print $2}' /etc/apache2/sites-available/* | while read -r line ; do  
-    mkdir $line/monit
-    echo "Monit 12966" > $line/monit/token.html   
-    
-done
-
 
 echo "set alert $email" >> $CONFIG
 echo "set mailserver $mailserver"
@@ -66,10 +60,10 @@ then
     echo "check host $host with address $host
       if failed
          port 80 protocol http         
-         request /monit/token.html with content = 'Monit [0-9.]+'        
+         request /?monit=1 with content = 'Monit [0-9.]+'        
       then alert" >> $CONFIG
     done
-  
+    
   fi;
   
 else 
