@@ -23,6 +23,7 @@ done
 apt-get install monit
 
 #start monit on startup
+/etc/init.d/monit stop && update-rc.d -f monit remove
 cp monit_config/monit.conf /etc/init/
 cp $CONFIG "$CONFIG.bak"
 
@@ -71,7 +72,13 @@ else
 fi
  
  # do something on $f
-done    
+done 
+
+for f in monit_config/config*
+do
+  echo >> $CONFIG
+done
+
 chmod 700 $CONFIG
 start monit
 
