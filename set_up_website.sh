@@ -10,6 +10,7 @@ alias=$3
 regularUser=$4
 email=$5
 uploadFolder=$6
+sshUser=$7
 
 owner=$(who am i | awk '{print $1}')
 
@@ -55,6 +56,11 @@ do
 	read uploadFolder
 done
 
+while [ "$sshUser" == "" ]
+do
+	echo -e $"Who is the ssh user to set as owner (and member of www-data group)?"
+	read sshUser
+done
 
 
 sitesAvailabledomain=$sitesAvailable$domain.conf
@@ -75,22 +81,22 @@ if [ "$action" == 'create' ]
 			mkdir $userDir$rootdir
 			### give permission to root dir
 			chmod 755 $userDir$rootdir
-			
+
 			### write test file in the new domain dir
 			if ! echo "<?php echo phpinfo(); ?>" > $userDir$rootdir/phpinfo.php
 			then
 				echo $"ERROR: Not able to write in file $userDir/$rootdir/phpinfo.php. Please check permissions"
 				exit;
-			else				
+			else
 				rm $userDir$rootdir/phpinfo.php
 				cp -r webroot/* $userDir$rootdir
-				
-				
-				
+
+
+
 			fi
-			
-			
-			
+
+
+
 		fi
 
 		### create virtual host rules file
@@ -128,13 +134,16 @@ if [ "$action" == 'create' ]
 			echo -e $"Host added to /etc/hosts file \n"
 		fi
 
-		if [ "$owner" == "" ]; then
-			chown -R $(whoami):www-data $userDir$rootdir
-		else
-			chown -R $owner:www-data $userDir$rootdir
-		fi
+		# if [ "$owner" == "" ]; then
+		# 	chown -R $(whoami):www-data $userDir$rootdir
+		# else
+		# 	chown -R $owner:www-data $userDir$rootdir
+		# fi
+
+		usermod -a -G www-data $sshUser
+		chown -R $sshUser:www-data $userDir$rootdir
 		chmod -R g+w $userDir$rootdir$uploadFolder
-		chmod -R g+s $userDir$rootdir
+		chmod -R g+s $userDir$rootdir$uploadFolder
 		### enable website
 		a2ensite $domain
 
