@@ -38,45 +38,50 @@ echo "<Location /server-status>
  </Location>" >> /etc/apache2/apache2.conf
 
 /etc/init.d/apache2 restart
- 
+
 
 echo "set alert $email" >> $CONFIG
 echo "set mailserver $mailserver"
 
 for f in /etc/monit/monitrc.d/*
 do
- read -p "Do you want to include configuration from $f? " -n 1 -r
+ read -p "Do you want to include configuration from the standard configuration file $f? " -n 1 -r
 echo    # (optional) move to a new line
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
    echo "##############################################
-#####        $f                   ##### 
+#####        $f                   #####
 ##############################################" >> $CONFIG
   cat $f >> $CONFIG
-  
+
   if [[ $f == *"apache2" ]]
     then
-    awk '$1~/^ServerName/{print $2}' /etc/apache2/sites-available/* | while read -r host ; do  
+    awk '$1~/^ServerName/{print $2}' /etc/apache2/sites-available/* | while read -r host ; do
     echo "check host $host with address $host
       if failed
-         port 80 protocol http         
-         request /?monit=1 with content = 'Monit [0-9.]+'        
+         port 80 protocol http
+         request /?monit=1 with content = 'Monit [0-9.]+'
       then alert" >> $CONFIG
     done
-    
+
   fi;
-  
-else 
+
+else
    echo "skiping $f"
 fi
- 
+
  # do something on $f
-done 
+done
 
 for f in monit_config/config*
-do
-  echo >> $CONFIG
+  do
+    read -p "Do you want to include our custom conf file $f? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      echo $f >> $CONFIG
+  fi;
 done
 
 chmod 700 $CONFIG
