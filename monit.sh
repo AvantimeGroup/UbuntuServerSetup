@@ -45,7 +45,7 @@ echo "set mailserver $mailserver"
 
 for f in /etc/monit/monitrc.d/*
 do
- read -p "Do you want to include configuration from $f? " -n 1 -r
+ read -p "Do you want to include configuration from the standard configuration file $f? " -n 1 -r
 echo    # (optional) move to a new line
 
 if [[ $REPLY =~ ^[Yy]$ ]]
@@ -75,8 +75,13 @@ fi
 done
 
 for f in monit_config/config*
-do
-  echo f >> $CONFIG
+  do
+    read -p "Do you want to include our custom conf file $f? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+      echo $f >> $CONFIG
+  fi;
 done
 
 chmod 700 $CONFIG
