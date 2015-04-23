@@ -10,13 +10,13 @@ fi
 
 while [ "$email" == "" ]
 do
-	echo -e $"Which email address should monit send alerts to"
+	echo -e $"Which email address should monit send alerts to?"
 	read email
 done
 
 while [ "$mailserver" == "" ]
 do
-	echo -e $"Which mail server should monit use to send alerts"
+	echo -e $"Which mail server should monit use to send alerts?"
 	read mailserver
 done
 
@@ -39,9 +39,10 @@ echo "<Location /server-status>
 
 /etc/init.d/apache2 restart
 
-
+echo "
+" >> $CONFIG
 echo "set alert $email" >> $CONFIG
-echo "set mailserver $mailserver"
+echo "set mailserver $mailserver" >> $CONFIG
 
 for f in /etc/monit/monitrc.d/*
 do
@@ -74,13 +75,20 @@ fi
  # do something on $f
 done
 
-for f in monit_config/config*
+echo "Finished asking about the default configurations."
+echo "Going to ask about our own default setups."
+
+for f in monit_config/config/*
   do
     read -p "Do you want to include our custom conf file $f? " -n 1 -r
   echo
   if [[ $REPLY =~ ^[Yy]$ ]]
     then
-      echo $f >> $CONFIG
+      cat $f >> $CONFIG
+      echo "
+      " >> $CONFIG
+    else
+      echo "skiping $f"
   fi;
 done
 
