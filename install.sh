@@ -4,7 +4,7 @@
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo "** installing packages"
 echo ""
-apt-get install fail2ban incron clamav sendmail
+apt-get install fail2ban incron clamav clamav-daemon inotify-tools sendmail
 echo "** configuring fail2ban"
 echo ""
 cd /etc/fail2ban/filter.d/
