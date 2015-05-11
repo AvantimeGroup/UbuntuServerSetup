@@ -140,6 +140,8 @@ if [ "$action" == 'create' ]
 		# 	chown -R $owner:www-data $userDir$rootdir
 		# fi
 
+		a2enmod rewrite
+
 		usermod -a -G www-data $sshUser
 		chown -R $sshUser:www-data $userDir$rootdir
 		chmod -R g+w $userDir$rootdir$uploadFolder
