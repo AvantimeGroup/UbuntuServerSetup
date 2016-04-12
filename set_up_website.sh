@@ -133,11 +133,12 @@ if [ "$action" == 'create' ]
 			ServerName $domain
 			ServerAlias $alias
 			DocumentRoot $userDir$rootdir
+			RedirectMatch 404 /\.git
 			<Directory />
 				AllowOverride All
 			</Directory>
 			<Directory $userDir$rootdir>
-				Options Indexes FollowSymLinks MultiViews
+				Options FollowSymLinks MultiViews
 				AllowOverride all
 				Require all granted
 			</Directory>
