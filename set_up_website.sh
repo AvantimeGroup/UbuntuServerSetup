@@ -11,12 +11,15 @@ regularUser=$4
 email=$5
 uploadFolder=$6
 sshUser=$7
-
+gitDeploy=$8
+gitCloneAddress=$9
+gitBranch=""
 owner=$(who am i | awk '{print $1}')
 
 sitesEnable='/etc/apache2/sites-enabled/'
 sitesAvailable='/etc/apache2/sites-available/'
 userDir='/var/www/'
+gitFolder='/.git/'
 
 
 ### don't modify from here unless you know what you are doing ####
@@ -62,6 +65,11 @@ do
 	read sshUser
 done
 
+while [[ "$gitDeploy" != "y"&& "$gitDeploy" != "n" ]]
+do
+	echo -e $"Are you going to deploy using git(y/n)?"
+	read gitDeploy
+done
 
 sitesAvailabledomain=$sitesAvailable$domain.conf
 rootdir=${domain//./-}
@@ -77,23 +85,40 @@ if [ "$action" == 'create' ]
 
 		### check if directory exists or not
 		if ! [ -d $userDir$rootdir ]; then
-			### create the directory
-			mkdir $userDir$rootdir
-			### give permission to root dir
-			chmod 755 $userDir$rootdir
 
-			### write test file in the new domain dir
-			if ! echo "<?php echo phpinfo(); ?>" > $userDir$rootdir/phpinfo.php
+			if [ "$gitDeploy" = 'y' ] 
 			then
-				echo $"ERROR: Not able to write in file $userDir/$rootdir/phpinfo.php. Please check permissions"
-				exit;
-			else
-				rm $userDir$rootdir/phpinfo.php
-				cp -r webroot/* $userDir$rootdir
+								 while [ "$cloneAddress" == "" ]
+									do
+										echo -e $"Please provide clone address?"
+									read cloneAddress
+								done
 
+								while [ "$gitBranch" == "" ]
+									do
+										echo -e $"Which branch to use?"
+									read gitBranch
+								done
 
+					  			git clone $cloneAddress $userDir$rootdir
+					  			git --git-dir=$userDir$rootdir$gitFolder --work-tree=$userDir$rootdir checkout $gitBranch
+				else
 
-			fi
+						### create the directory
+						mkdir $userDir$rootdir
+						### give permission to root dir
+						chmod 755 $userDir$rootdir
+
+						### write test file in the new domain dir
+						if ! echo "<?php echo phpinfo(); ?>" > $userDir$rootdir/phpinfo.php
+						then
+							echo $"ERROR: Not able to write in file $userDir/$rootdir/phpinfo.php. Please check permissions"
+							exit;
+						else
+							rm $userDir$rootdir/phpinfo.php
+							cp -r webroot/* $userDir$rootdir
+						fi
+				fi
 
 
 
