@@ -102,6 +102,8 @@ if [ "$action" == 'create' ]
 
 					  			git clone $cloneAddress $userDir$rootdir
 					  			git --git-dir=$userDir$rootdir$gitFolder --work-tree=$userDir$rootdir checkout $gitBranch
+					  			### give permission to root dir
+					  			chmod 755 $userDir$rootdir
 				else
 
 						### create the directory
