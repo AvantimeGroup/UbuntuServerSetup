@@ -142,6 +142,12 @@ if [ "$action" == 'create' ]
 				AllowOverride all
 				Require all granted
 			</Directory>
+
+			<Files xmlrpc.php>
+                                order deny,allow
+                                deny from all
+                        </Files>
+
 			ErrorLog /var/log/apache2/$domain-error.log
 			LogLevel error
 			CustomLog /var/log/apache2/$domain-access.log combined
